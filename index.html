@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة الاشتراكات الاحترافي</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="login-screen" class="screen active">
+        <div class="login-card">
+            <h2>تسجيل الدخول</h2>
+            <p>برجاء إدخال كلمة المرور للمتابعة</p>
+            <input type="password" id="login-password" placeholder="كلمة المرور">
+            <button id="login-btn">دخول</button>
+            <p class="hint">كلمة المرور الافتراضية: 123456</p>
+        </div>
+    </div>
+
+    <div id="main-app" class="screen">
+        <aside class="sidebar">
+            <div class="logo">إدارة الاشتراكات</div>
+            <nav id="main-nav">
+                <button data-target="dashboard" class="active">لوحة التحكم</button>
+                <button data-target="groups-sec">المجموعات</button>
+                <button data-target="packages-sec">الباقات</button>
+                <button data-target="customers-sec">العملاء</button>
+                <button data-target="payments-sec">التحصيل الشهري</button>
+                <button data-target="late-sec">المتأخرين</button>
+                <button data-target="settings-sec">الإعدادات</button>
+            </nav>
+            <button id="logout-btn" class="logout">تسجيل الخروج</button>
+        </aside>
+
+        <main class="content">
+            <section id="dashboard" class="content-sec active">
+                <h1>لوحة التحكم</h1>
+                <div class="stats-grid" id="stats-container">
+                    </div>
+                <div class="charts-container">
+                    <div class="chart-box">
+                        <h3>ملخص المجموعات</h3>
+                        <div id="group-summary-list"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="groups-sec" class="content-sec">
+                <div class="header-row">
+                    <h1>إدارة المجموعات</h1>
+                    <button class="btn-add" onclick="showModal('group-modal')">إضافة مجموعة +</button>
+                </div>
+                <table id="groups-table">
+                    <thead>
+                        <tr>
+                            <th>اسم المجموعة</th>
+                            <th>المالك</th>
+                            <th>رقم المالك</th>
+                            <th>حامل الرقم</th>
+                            <th>العدد/الحد</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+
+            <section id="packages-sec" class="content-sec">
+                <div class="header-row">
+                    <h1>إدارة الباقات</h1>
+                    <button class="btn-add" onclick="showModal('package-modal')">إضافة باقة +</button>
+                </div>
+                <table id="packages-table">
+                    <thead>
+                        <tr>
+                            <th>اسم الباقة</th>
+                            <th>السعر</th>
+                            <th>الوصف</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+
+            <section id="customers-sec" class="content-sec">
+                <div class="header-row">
+                    <h1>إدارة العملاء</h1>
+                    <button class="btn-add" onclick="showModal('customer-modal')">إضافة عميل +</button>
+                </div>
+                <div class="filter-bar">
+                    <input type="text" id="customer-search" placeholder="بحث بالاسم أو الهاتف...">
+                    <select id="filter-group-select">
+                        <option value="">كل المجموعات</option>
+                    </select>
+                </div>
+                <table id="customers-table">
+                    <thead>
+                        <tr>
+                            <th>الاسم</th>
+                            <th>الهاتف</th>
+                            <th>المجموعة</th>
+                            <th>الباقة</th>
+                            <th>الحالة</th>
+                            <th>نوع العميل</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+
+            <section id="payments-sec" class="content-sec">
+                <div class="header-row">
+                    <h1>التحصيل المالي</h1>
+                    <div class="payment-controls">
+                        <input type="month" id="payment-month-picker">
+                        <button class="btn-action" id="generate-payments-btn">إنشاء سجلات الشهر</button>
+                    </div>
+                </div>
+                <div id="payment-summary" class="monthly-sum"></div>
+                <table id="payments-table">
+                    <thead>
+                        <tr>
+                            <th>العميل</th>
+                            <th>المجموعة</th>
+                            <th>المبلغ المستحق</th>
+                            <th>الحالة</th>
+                            <th>التاريخ</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+
+            <section id="late-sec" class="content-sec">
+                <h1>المتأخرين عن السداد</h1>
+                <table id="late-table">
+                    <thead>
+                        <tr>
+                            <th>العميل</th>
+                            <th>الهاتف</th>
+                            <th>الشهر</th>
+                            <th>المبلغ</th>
+                            <th>آخر تذكير</th>
+                            <th>عدد التذكيرات</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+
+            <section id="settings-sec" class="content-sec">
+                <h1>الإعدادات والنسخ الاحتياطي</h1>
+                <div class="settings-grid">
+                    <div class="card">
+                        <h3>تغيير كلمة المرور</h3>
+                        <input type="password" id="new-password" placeholder="كلمة المرور الجديدة">
+                        <button class="btn-action" id="update-pass-btn">حفظ</button>
+                    </div>
+                    <div class="card">
+                        <h3>النسخ الاحتياطي</h3>
+                        <div class="btn-group">
+                            <button class="btn-add" id="export-btn">تصدير البيانات (JSON)</button>
+                            <label class="btn-action custom-file-upload">
+                                <input type="file" id="import-btn" accept=".json"/>
+                                استيراد بيانات
+                            </label>
+                        </div>
+                        <p class="warning-text">⚠️ الاستيراد سيقوم بمسح كافة البيانات الحالية واستبدالها.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="group-modal" class="modal">
+        <div class="modal-content">
+            <h3>إضافة/تعديل مجموعة</h3>
+            <form id="group-form">
+                <input type="hidden" id="group-id">
+                <input type="text" id="groupName" placeholder="اسم المجموعة" required>
+                <input type="text" id="ownerName" placeholder="اسم المالك" required>
+                <input type="text" id="ownerPhone" placeholder="رقم هاتف المالك" required>
+                <input type="text" id="carrierName" placeholder="اسم حامل الرقم" required>
+                <input type="text" id="carrierPhone" placeholder="رقم الهاتف الفعلي" required>
+                <input type="number" id="groupLimit" placeholder="الحد الطبيعي للعملاء" required>
+                <div class="modal-btns">
+                    <button type="submit" class="btn-add">حفظ</button>
+                    <button type="button" class="btn-cancel" onclick="closeModal('group-modal')">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="package-modal" class="modal">
+        <div class="modal-content">
+            <h3>إضافة/تعديل باقة</h3>
+            <form id="package-form">
+                <input type="hidden" id="package-id">
+                <input type="text" id="packageName" placeholder="اسم الباقة" required>
+                <input type="number" id="packagePrice" placeholder="السعر الشهري" required>
+                <textarea id="packageDesc" placeholder="الوصف"></textarea>
+                <div class="modal-btns">
+                    <button type="submit" class="btn-add">حفظ</button>
+                    <button type="button" class="btn-cancel" onclick="closeModal('package-modal')">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="customer-modal" class="modal">
+        <div class="modal-content">
+            <h3>إضافة/تعديل عميل</h3>
+            <form id="customer-form">
+                <input type="hidden" id="customer-id">
+                <input type="text" id="custName" placeholder="الاسم" required>
+                <input type="text" id="custPhone" placeholder="رقم الهاتف" required>
+                <select id="custGroup" required></select>
+                <select id="custPackage" required></select>
+                <select id="custStatus">
+                    <option value="active">نشط</option>
+                    <option value="suspended">موقوف</option>
+                </select>
+                <div class="special-checkbox">
+                    <input type="checkbox" id="isSpecial"> <label for="isSpecial">عميل استثنائي؟</label>
+                </div>
+                <div id="special-fields" class="hidden">
+                    <select id="specialType">
+                        <option value="discount">خصم (مبلغ)</option>
+                        <option value="customPrice">سعر خاص ثابت</option>
+                        <option value="extra">إضافي (Extra - خارج الحد)</option>
+                    </select>
+                    <input type="number" id="specialValue" placeholder="القيمة">
+                    <input type="text" id="specialNote" placeholder="ملاحظات">
+                </div>
+                <div class="modal-btns">
+                    <button type="submit" class="btn-add">حفظ</button>
+                    <button type="button" class="btn-cancel" onclick="closeModal('customer-modal')">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
