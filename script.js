@@ -314,29 +314,69 @@ const renderSection = (sectionId) => {
         }).join('');
     }
 
-    if (sectionId === 'late-sec') {
-        const tbody = document.querySelector('#late-table tbody');
-        const late = db.payments.filter(p => p.status === 'unpaid');
-        
-        tbody.innerHTML = late.map(p => {
-            const cust = db.customers.find(c => c.id === p.customerId);
-            const remKey = `${p.customerId}-${p.month}`;
-            const remInfo = db.reminders[remKey] || { count: 0, date: 'لم يتم' };
-            
-            return `
-            <tr>
-                <td>${cust?.name}</td>
-                <td>${cust?.phone}</td>
-                <td>${p.month}</td>
-                <td>${p.amount} ج.م</td>
-                <td>${remInfo.date}</td>
-                <td>${remInfo.count}</td>
-                <td>
-                    <button class="btn-action" onclick="sendReminder('${p.customerId}', '${p.month}', '${cust?.phone}', ${p.amount})">WhatsApp</button>
-                </td>
-            </tr>`;
-        }).join('');
-    }
+if (sectionId === 'customers-sec') {
+
+    const filterSelect = document.getElementById('filter-group-select');
+    const selectedGroup = filterSelect.value; // ✅ حفظ الاختيار
+
+    updateCustomerDropdowns();
+
+    filterSelect.value = selectedGroup; // ✅ إرجاعه
+
+    const searchTerm = document.getElementById('customer-search').value.toLowerCase();
+    const groupFilter = filterSelect.value;
+
+    const tbody = document.querySelector('#customers-table tbody');
+
+    const filtered = db.customers.filter(c => {
+        const matchSearch =
+            c.name.toLowerCase().includes(searchTerm) ||
+            c.phone.includes(searchTerm);
+
+        const matchGroup =
+            groupFilter === '' || c.groupId === groupFilter;
+
+        return matchSearch && matchGroup;
+    });
+
+    tbody.innerHTML = filtered.map(c => {
+        const group = db.groups.find(g => g.id === c.groupId)?.groupName || '---';
+        const pkg = db.packages.find(p => p.id === c.packageId)?.packageName || '---';
+
+return `
+<tr class="${c.specialType === 'extra' ? 'row-extra' : ''}">
+    <td>${c.name}</td>
+    <td>${c.phone}</td>
+    <td>${group}</td>
+    <td>${pkg}</td>
+    <td>
+        <span class="badge badge-${c.status}">
+            ${c.status === 'active' ? 'نشط' : 'موقوف'}
+        </span>
+    </td>
+    <td>
+        ${
+            c.specialType === 'extra'
+                ? '<span class="badge badge-extra">إضافي</span>'
+                : c.isSpecial
+                ? '<span class="badge badge-special">استثنائي</span>'
+                : 'عادي'
+        }
+    </td>
+    <td>
+        <button class="btn-action" onclick="editCustomer('${c.id}')">
+            تعديل
+        </button>
+        <button class="btn-action btn-delete" onclick="deleteCustomer('${c.id}')">
+            حذف
+        </button>
+    </td>
+</tr>
+`;
+;
+    }).join('');
+}
+
 };
 
 // --- Actions Helpers ---
@@ -502,4 +542,5 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         reader.readAsText(e.target.files[0]);
     });
+
 });
